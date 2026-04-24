@@ -1,0 +1,81 @@
+# Problem Statement 2: The Ultimate Intern Guide 🚀
+
+Hey there! As your senior developer, I've seen interns get stuck when moving from nice, clean CSV files into the messy world of real-life Unstructured Data (like PDFs and JPEGs). Don't panic! We're going to break this down piece by piece. 
+
+Problem Statement 2 is all about **"Radiological Image-Based Condition Detection & Report Correlation."** 
+
+In simple English: **Does the text in the doctor's report match what is actually visible in the X-Ray/Ultrasound?** If a hospital claims they put a stent in a patient's heart (and billed for it), our AI needs to look at the Angiogram video/image and confirm, "Yes, I see a stent."
+
+---
+
+## 📚 Core Concepts You Need to Know
+
+### 1. What is OCR? (Optical Character Recognition)
+When you have a CSV flat file, you can just load it into Pandas. But a scanned PDF of a doctor's report is essentially a picture of text. The computer just sees pixels, not words. 
+**OCR** is the AI technology that reads an image and extracts the actual text from it. 
+*   *Popular Tools:* Tesseract OCR (Free), Google Cloud Vision, AWS Textract, EasyOCR.
+*   *How we use it:* We will run OCR on the PDF reports in our dataset so we can "read" what the doctor diagnosed using Python.
+
+### 2. Computer Vision (CV) vs. Tabular ML
+In your past ML projects, you used Pandas, Scikit-Learn, or XGBoost. That's for numbers and categories.
+For images (like X-Rays), we use Deep Learning—specifically **Convolutional Neural Networks (CNNs)**. Instead of rows and columns, CNNs look at patterns of pixels to detect shapes, edges, and eventually, diseases.
+*   *Popular Tools:* PyTorch, TensorFlow, YOLO (You Only Look Once - for Object Detection).
+
+### 3. "Correlation" (NLP + CV)
+This is the magic word in the problem statement. 
+*   **CV Engine says:** "I am 90% sure this X-Ray shows Tuberculosis."
+*   **OCR + NLP Engine says:** "The doctor's text report says the patient has Tuberculosis."
+*   **Correlation:** Match! The claim is valid. If they don't match, the claim is flagged as potentially fraudulent.
+
+---
+
+## 🧹 How to "Clean" Unstructured Data
+You asked how this compares to cleaning a CSV. Here is the pipeline for unstructured data:
+
+### Step 1: File Sorting (The equivalent of dropping nulls)
+Look at `dataset/Claims/MC011A/PMJAY_MH_S_G_R1_2026...`. Inside, you have PDFs and JPEGs all mixed up.
+*   **Action:** Write a Python script (using libraries like `os` and `shutil`) to crawl through all folders and separate files. Move all `_REPORT.pdf` files into a "Text_Data" folder, and all `_IMAGE.jpeg` / `_XRAY` files into an "Image_Data" folder.
+
+### Step 2: PDF processing & OCR (The equivalent of parsing columns)
+Some PDFs have 10 pages; some have 1. Sometimes the text is searchable, sometimes it's a scanned picture.
+*   **Action:** Use a Python library called `pdf2image` to turn the PDF pages into pictures. Then, pass those pictures into `pytesseract` (OCR) to extract the text. Save that text into a `.txt` or `.json` file. Now you finally have text you can run NLP on!
+
+### Step 3: Image Resizing & Standardization (The equivalent of MinMax Scaling)
+X-Rays come in all different sizes and resolutions. A CNN expects a fixed size (like 224x224 pixels).
+*   **Action:** Use OpenCV (`cv2`) or Pillow (`PIL`) in Python to resize all your JPEGs to the exact same dimension. Convert them to grayscale (since X-Rays don't need RGB color channels), and normalize the pixel values to be between 0 and 1. 
+
+---
+
+## 🗺️ Step-by-Step Execution Plan to Win
+
+If we want to build a winning prototype, here is the exact order of operations we will take:
+
+### Phase 1: Rule-Based OCR Pipeline (Days 1-2)
+We won't build crazy AI right away. Let's get the text out.
+1.  Write a script to extract text from all diagnostic reports.
+2.  Use RegEx (Regular Expressions) or a basic LLM API (like Gemini/OpenAI) to extract key entities from the OCR text: `Patient Name`, `Date of Surgery`, `Diagnosis`, `Procedure Done`.
+
+### Phase 2: The Medical Image Classifier (Days 3-4)
+Before we detect diseases, the AI needs to know what it's looking at!
+1.  Train a simple classification model (like ResNet-50) using PyTorch.
+2.  Give it 3 categories: `Class 0: Chest X-Ray`, `Class 1: Ultrasound`, `Class 2: Angiogram`.
+3.  *Why?* Because if a Hospital uploads an Ultrasound for a Heart Surgery claim, our system should instantly flag it as Fraud!
+
+### Phase 3: The Correlation Engine (The "Brain")
+1.  Take the output from Phase 1 (e.g., Diagnosis: "Kidney Stones").
+2.  Take the output from Phase 2 (e.g., Image Type: "Ultrasound").
+3.  Write logic: If `Diagnosis == "Kidney Stones"` AND `Image == "Ultrasound"`, then `Approve`. If `Image == "Angiogram"`, then `Reject - Mismatched Records`.
+
+### Phase 4: The Show-Stopping UI (The "Hackathon Winner")
+Judges don't look at backend code. They look at the UI.
+1.  Build a dashboard (React/Next.js).
+2.  Create an **Image Uploader**. When you drag-and-drop a claim folder into the UI, it sends it to your Python FastAPI backend.
+3.  The UI should show a highly visual "Fraud Analysis" screen. It displays the uploaded image next to the extracted OCR text, explicitly telling the judge why they match or mismatch.
+
+---
+
+## 💡 What's our very first coding task?
+As your senior, I'm assigning you your first task! 
+We need to see what we're dealing with. We should write a **Data Exploration Script** in Python that goes through the `dataset/Claims` directory, counts exactly how many PDFs vs Images we have, and tries to run basic OCR on just ONE single PDF to see if the text is readable. 
+
+Shall we start writing that Python script?
