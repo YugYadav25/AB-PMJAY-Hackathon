@@ -17,6 +17,8 @@ dataset/
 *.zip
 *.tar
 *.tar.gz
+*.pth
+*.pt
 *.h5
 *.bin
 *.csv
