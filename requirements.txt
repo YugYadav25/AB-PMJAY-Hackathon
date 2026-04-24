@@ -1,0 +1,25 @@
+# AB-PMJAY PS2 OCR pipeline dependencies
+# Use with:
+# python -m pip install --upgrade pip setuptools wheel
+# python -m pip install --no-cache-dir --upgrade -r requirements.txt --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple
+
+# Core
+numpy>=1.26
+pandas>=2.2
+Pillow>=10.0
+pypdf>=4.0
+pdf2image>=1.17.0
+pymupdf>=1.24.0
+opencv-python-headless>=4.10.0
+tqdm>=4.66
+
+# OCR stack
+# Keep torch packages unpinned to let pip resolve versions compatible with your Python runtime.
+torch
+torchvision
+torchaudio
+easyocr>=1.7.2
+
+# Notes
+# 1) pdf2image needs Poppler binaries on PATH (system dependency, not installed by pip).
+# 2) Use the same environment/kernel for install and notebook run.
